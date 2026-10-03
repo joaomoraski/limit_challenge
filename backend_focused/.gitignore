@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+db.sqlite3
+.omc/
+.idea/
+.next/
+node_modules/
+*.egg-info/
+.pytest_cache/
