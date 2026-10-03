@@ -1,4 +1,5 @@
 from django.db.models import ProtectedError
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -28,15 +29,6 @@ from fleet.services import (
 
 
 class ProtectedDeleteMixin:
-    def perform_destroy(self, instance):
-        try:
-            instance.delete()
-        except ProtectedError:
-            return Response(
-                {"detail": "Cannot delete this object because it is referenced by other records."},
-                status=status.HTTP_409_CONFLICT,
-            )
-
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         try:
@@ -74,6 +66,7 @@ class VehicleViewSet(ModelViewSet):
         return VehicleSerializer
 
     def retrieve(self, request, *args, **kwargs):
+        get_object_or_404(Vehicle, pk=kwargs["pk"])
         vehicle = get_vehicle_detail(kwargs["pk"])
         serializer = VehicleDetailSerializer(vehicle)
         return Response(serializer.data)
